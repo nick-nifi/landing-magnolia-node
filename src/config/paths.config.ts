@@ -1,4 +1,4 @@
-import { PagePaths } from '../types/api.types';
+import { PagePaths } from '../shared/types/common.types';
 
 /**
  * Magnolia CMS page paths configuration

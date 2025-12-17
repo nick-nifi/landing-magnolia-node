@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { config } from '../config';
+import { config } from '../../config';
 
 class MagnoliaService {
   private client: AxiosInstance;

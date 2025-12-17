@@ -4,7 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import { config } from './config';
-import apiRoutes from './routes/api.routes';
+import homeRoutes from './modules/home/home.routes';
+import healthRoutes from './modules/health/health.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
 
@@ -46,7 +47,8 @@ class App {
 
   private initializeRoutes() {
     // API routes
-    this.app.use(config.api.prefix, apiRoutes);
+    this.app.use(`${config.api.prefix}/health`, healthRoutes);
+    this.app.use(`${config.api.prefix}/home`, homeRoutes);
 
     // Root endpoint
     this.app.get('/', (_req, res) => {
@@ -55,7 +57,7 @@ class App {
         version: '1.0.0',
         endpoints: {
           health: `${config.api.prefix}/health`,
-          magnolia: `${config.api.prefix}/magnolia/*`,
+          home: `${config.api.prefix}/home`,
         },
       });
     });
