@@ -2,22 +2,41 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import compression from 'compression';
 import { config } from './config';
-import homeRoutes from './modules/home/home.routes';
-import healthRoutes from './modules/health/health.routes';
-import investorAnnouncementsRoutes from './modules/investor-announcements/investor-announcements.routes';
+// import homeRoutes from './modules/home/home.routes';
+// import healthRoutes from './modules/health/health.routes';
+// import investorAnnouncementsRoutes from './modules/investor-announcements/investor-announcements.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
-
+import { createProxyMiddleware } from "http-proxy-middleware";
 class App {
   public app: Application;
 
   constructor() {
     this.app = express();
     this.initializeMiddlewares();
-    this.initializeRoutes();
+    // this.initializeRoutes();
     this.initializeErrorHandling();
+    this.forwardRequest();
+  }
+  private forwardRequest(){
+    this.app.use(
+      config.api.prefix,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const apiPath = config.magnolia.apiPath.replace(/\/$/, '');
+          const finalPath = apiPath + (remainingPath || '');
+          return finalPath;
+        },
+      })
+    );
   }
 
   private initializeMiddlewares() {
@@ -33,7 +52,7 @@ class App {
     );
 
     // Compression middleware
-    this.app.use(compression());
+    // this.app.use(compressio());
 
     // Body parsing middleware
     this.app.use(express.json());
@@ -46,25 +65,25 @@ class App {
     this.app.use(requestLogger);
   }
 
-  private initializeRoutes() {
-    // API routes
-    this.app.use(`${config.api.prefix}/health`, healthRoutes);
-    this.app.use(`${config.api.prefix}/home`, homeRoutes);
-    this.app.use(`${config.api.prefix}/investor-announcements`, investorAnnouncementsRoutes);
+  // private initializeRoutes() {
+  //   // API routes
+  //   this.app.use(`${config.api.prefix}/health`, healthRoutes);
+  //   this.app.use(`${config.api.prefix}/home`, homeRoutes);
+  //   this.app.use(`${config.api.prefix}/investor-announcements`, investorAnnouncementsRoutes);
 
-    // Root endpoint
-    this.app.get('/', (_req, res) => {
-      res.json({
-        message: 'UOBKH Landing API - Magnolia Forwarding Service',
-        version: '1.0.0',
-        endpoints: {
-          health: `${config.api.prefix}/health`,
-          home: `${config.api.prefix}/home`,
-          investorAnnouncements: `${config.api.prefix}/investor-announcements`,
-        },
-      });
-    });
-  }
+  //   // Root endpoint
+  //   this.app.get('/', (_req, res) => {
+  //     res.json({
+  //       message: 'UOBKH Landing API - Magnolia Forwarding Service',
+  //       version: '1.0.0',
+  //       endpoints: {
+  //         health: `${config.api.prefix}/health`,
+  //         home: `${config.api.prefix}/home`,
+  //         investorAnnouncements: `${config.api.prefix}/investor-announcements`,
+  //       },
+  //     });
+  //   });
+  // }
 
   private initializeErrorHandling() {
     this.app.use(errorHandler);
