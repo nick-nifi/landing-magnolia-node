@@ -1,27 +1,30 @@
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
+import { environments } from './environments';
 
 export const config = {
   // Server configuration
-  port: parseInt(process.env.PORT || '3000', 10),
-  nodeEnv: process.env.NODE_ENV || 'development',
+  port: environments.PORT,
+  nodeEnv: environments.NODE_ENV,
 
   // Magnolia CMS configuration
   magnolia: {
-    baseUrl: process.env.MAGNOLIA_BASE_URL || 'http://localhost:8080',
-    apiPath: process.env.MAGNOLIA_API_PATH || '/magnoliaAuthor/.rest/delivery',
-    timeout: parseInt(process.env.MAGNOLIA_TIMEOUT || '30000', 10),
+    baseUrl: environments.MAGNOLIA_BASE_URL,
+    apiPath: environments.MAGNOLIA_API_PATH,
+    timeout: environments.MAGNOLIA_TIMEOUT,
   },
 
   // CORS configuration
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3001',
+    origin: environments.CORS_ORIGIN,
   },
 
   // API configuration
   api: {
-    prefix: process.env.API_PREFIX || '/api',
+    prefix: environments.API_PREFIX,
+  },
+
+  // Rate limiting
+  rateLimit: {
+    windowMs: environments.RATE_LIMIT_WINDOW_MS,
+    maxRequests: environments.RATE_LIMIT_MAX_REQUESTS,
   },
 };
