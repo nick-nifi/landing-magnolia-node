@@ -6,6 +6,7 @@ import compression from 'compression';
 import { config } from './config';
 import homeRoutes from './modules/home/home.routes';
 import healthRoutes from './modules/health/health.routes';
+import investorAnnouncementsRoutes from './modules/investor-announcements/investor-announcements.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
 
@@ -49,6 +50,7 @@ class App {
     // API routes
     this.app.use(`${config.api.prefix}/health`, healthRoutes);
     this.app.use(`${config.api.prefix}/home`, homeRoutes);
+    this.app.use(`${config.api.prefix}/investor-announcements`, investorAnnouncementsRoutes);
 
     // Root endpoint
     this.app.get('/', (_req, res) => {
@@ -58,6 +60,7 @@ class App {
         endpoints: {
           health: `${config.api.prefix}/health`,
           home: `${config.api.prefix}/home`,
+          investorAnnouncements: `${config.api.prefix}/investor-announcements`,
         },
       });
     });
