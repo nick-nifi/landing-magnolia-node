@@ -20,6 +20,94 @@ class App {
     this.forwardRequest();
   }
   private forwardRequest(){
+
+    this.app.use(
+      config.api.prefix_image_author,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const imageAuthorPath = config.magnolia.apiImageAuthorPath.replace(/\/$/, '');
+          return `${imageAuthorPath}/${remainingPath}`;
+        },
+      })
+    );
+
+
+    this.app.use(
+      config.api.prefix_image_public,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const imagePublicPath = config.magnolia.apiImagePublicPath.replace(/\/$/, '');
+          return `${imagePublicPath}/${remainingPath}`;
+        },
+      })
+    );
+
+
+    this.app.use(
+      config.api.prefix_annotation,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const annotationPath = config.magnolia.apiAnnotationPath.replace(/\/$/, '');
+          return `${annotationPath}/${remainingPath}`;
+        },
+      })
+    );
+
+    this.app.use(
+      config.api.prefix_pages,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const pagesPath = config.magnolia.apiPagesPath.replace(/\/$/, '');
+          return `${pagesPath}/${remainingPath}`;
+        },
+      })
+    );
+
+    this.app.use(
+      config.api.prefix_nav,
+      createProxyMiddleware({
+        target: config.magnolia.baseUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => {
+          let remainingPath = path.replace(/^\/api/, '');
+          if (remainingPath && !remainingPath.startsWith('/')) {
+            remainingPath = '/' + remainingPath;
+          }
+          remainingPath = remainingPath.replace(/\/$/, '');
+          const navPath = config.magnolia.apiNavPath.replace(/\/$/, '');
+          return `${navPath}/${remainingPath}`;
+        },
+      })
+    );
+
     this.app.use(
       config.api.prefix,
       createProxyMiddleware({
